@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: ledgerline-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ledgerline
+    ports:
+      - "5432:5432"
+    volumes:
+      - ledgerline_data:/var/lib/postgresql/data
+volumes:
+  ledgerline_data:
