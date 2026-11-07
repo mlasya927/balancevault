@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS users (
   id BIGSERIAL PRIMARY KEY,
   name TEXT NOT NULL,
@@ -16,11 +17,14 @@ CREATE TABLE IF NOT EXISTS accounts (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Idempotency keys are unique per authenticated user.
 CREATE TABLE IF NOT EXISTS idempotency_keys (
-  key TEXT PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  key TEXT NOT NULL,
   request_hash TEXT NOT NULL,
   response_json JSONB,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, key)
 );
 
 CREATE TABLE IF NOT EXISTS ledger_entries (
@@ -38,8 +42,9 @@ CREATE TABLE IF NOT EXISTS ledger_entries (
 CREATE INDEX IF NOT EXISTS ledger_account_created_idx
   ON ledger_entries(account_id, created_at, id);
 
--- Prevent ordinary UPDATE/DELETE of ledger rows. Database owner can still alter schema/data;
--- production deployments should use a separate restricted application DB role.
+-- Prevent ordinary UPDATE/DELETE of ledger rows.
+-- A database owner can still alter schema or data.
+-- Production deployments should use a separate restricted application DB role.
 CREATE OR REPLACE FUNCTION reject_ledger_mutation() RETURNS trigger AS $$
 BEGIN
   RAISE EXCEPTION 'ledger_entries is append-only';
@@ -47,5 +52,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS ledger_no_update ON ledger_entries;
-CREATE TRIGGER ledger_no_update BEFORE UPDATE OR DELETE ON ledger_entries
+
+CREATE TRIGGER ledger_no_update
+BEFORE UPDATE OR DELETE ON ledger_entries
 FOR EACH ROW EXECUTE FUNCTION reject_ledger_mutation();
