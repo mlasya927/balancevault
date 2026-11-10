@@ -23,6 +23,51 @@ app.get('/health', (_req, res) =>
   res.json({ status: 'ok', service: 'LedgerLine API' })
 );
 
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body || {};
+
+    if (
+      typeof name !== 'string' ||
+      typeof email !== 'string' ||
+      typeof password !== 'string' ||
+      !name.trim() ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+      password.length < 8
+    ) {
+      return res.status(400).json({
+        error: 'Valid name, email and password (minimum 8 characters) required'
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const result = await pool.query(
+      `INSERT INTO users (name, email, password_hash, role)
+       VALUES ($1, $2, $3, 'holder')
+       RETURNING id, name, email, role, created_at`,
+      [name.trim(), email.trim().toLowerCase(), passwordHash]
+    );
+
+    return res.status(201).json({
+      message: 'User registered successfully',
+      user: result.rows[0]
+    });
+  } catch (e) {
+    if (e.code === '23505') {
+      return res.status(409).json({
+        error: 'Email already registered'
+      });
+    }
+
+    console.error('Registration failed:', e);
+    return res.status(500).json({
+      error: 'Registration failed'
+    });
+  }
+});
+
+
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -35,6 +80,7 @@ app.post('/api/auth/login', async (req, res) => {
       'SELECT id,name,email,password_hash,role FROM users WHERE email=$1',
       [email]
     );
+
 
     const user = result.rows[0];
 
@@ -403,7 +449,7 @@ app.post('/api/money/transfer', requireAuth, allowRoles('admin', 'holder'), (req
   moveMoney(req, res, 'transfer')
 );
 
-app.get('/api/accounts/:id/statement', requireAuth, async (req, res) => {
+app.get('/api/accounts/:id/statement', requireAuth, allowRoles('admin', 'auditor', 'holder'), async (req, res) => {
   try {
     const a = await pool.query(
       'SELECT id,owner_user_id,balance_paise FROM accounts WHERE id=$1',
