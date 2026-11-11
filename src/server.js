@@ -7,11 +7,12 @@ import jwt from 'jsonwebtoken';
 import { randomUUID, createHash } from 'node:crypto';
 import { pool } from './db.js';
 import { requireAuth, allowRoles } from './auth.js';
+import { fileURLToPath } from 'node:url';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(express.static(new URL('../public', import.meta.url).pathname));
+app.use(express.static(fileURLToPath(new URL('../public', import.meta.url))));
 app.use(cors());
 app.use(express.json());
 

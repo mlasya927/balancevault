@@ -1,6 +1,133 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LedgerLine</title><link rel="stylesheet" href="/styles.css"></head><body>
-<header><div><p class="eyebrow">MONEY MOVEMENT, MADE AUDITABLE</p><h1>LedgerLine</h1></div><span id="session">Not signed in</span></header><main>
-<section id="loginPanel" class="panel"><h2>Sign in</h2><p class="muted">Use local demo credentials from README.md.</p><form id="loginForm"><label>Email<input name="email" type="email" required></label><label>Password<input name="password" type="password" required></label><button>Sign in</button></form><p id="loginMessage" class="message"></p></section>
-<section id="appPanel" hidden><div class="toolbar"><h2>Workspace</h2><button id="logout" class="secondary">Sign out</button></div><section class="panel"><div class="toolbar"><h3>Accounts</h3><button id="refresh" class="secondary">Refresh</button></div><div id="accounts" class="accounts"></div></section>
-<section class="panel"><h3>Money movement</h3><form id="moneyForm" class="grid"><label>Operation<select name="kind"><option value="deposit">Deposit</option><option value="withdraw">Withdraw</option><option value="transfer">Transfer</option></select></label><label>From account ID<input name="accountId" type="number" min="1" required></label><label id="toWrap" hidden>To account ID<input name="toAccountId" type="number" min="1"></label><label>Amount (paise)<input name="amountPaise" type="number" min="1" step="1" required></label><label>Description<input name="description" maxlength="120"></label><button>Submit transaction</button></form><p class="muted">₹1 = 100 paise. Each operation gets a unique idempotency key.</p><p id="moneyMessage" class="message"></p></section>
-<section class="panel"><h3>Statement</h3><form id="statementForm" class="inline"><label>Account ID<input name="accountId" type="number" min="1" required></label><button>Load statement</button></form><div id="statement"></div></section><section id="auditPanel" class="panel" hidden><h3>Audit ledger</h3><button id="loadAudit" class="secondary">Load ledger</button><div id="audit"></div></section></section></main><footer>Educational challenge MVP — never use with real money or customer data.</footer><script src="/app.js"></script></body></html>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101b35">
+  <title>BalanceVault | Secure Banking</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">B</div>
+      <div>
+        <h1>BalanceVault</h1>
+        <p>SMART MONEY. SECURE FUTURE.</p>
+      </div>
+    </div>
+    <div class="session-area">
+      <span class="status-dot"></span>
+      <span id="session">Not signed in</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="welcome">
+      <div>
+        <p class="eyebrow">YOUR FINANCIAL WORKSPACE</p>
+        <h2>Money management, <span>made simple.</span></h2>
+        <p>Secure account operations with transparent, auditable transactions.</p>
+      </div>
+      <div class="welcome-art">₹</div>
+    </section>
+
+    <section id="loginPanel" class="panel login-panel">
+      <div class="section-heading">
+        <p class="eyebrow">WELCOME BACK</p>
+        <h2>Sign in to BalanceVault</h2>
+        <p class="muted">Access your secure financial workspace.</p>
+      </div>
+      <form id="loginForm">
+        <label>Email address
+          <input name="email" type="email" placeholder="you@example.com" required>
+        </label>
+        <label>Password
+          <input name="password" type="password" placeholder="Enter your password" required>
+        </label>
+        <button type="submit">Sign in securely →</button>
+      </form>
+      <p id="loginMessage" class="message"></p>
+      <p class="muted">Use the local demo credentials documented in README.md.</p>
+    </section>
+
+    <section id="appPanel" hidden>
+      <div class="toolbar workspace-heading">
+        <div>
+          <p class="eyebrow">OVERVIEW</p>
+          <h2>Your workspace</h2>
+        </div>
+        <button id="logout" class="secondary">Sign out</button>
+      </div>
+
+      <section class="panel">
+        <div class="toolbar">
+          <div>
+            <p class="eyebrow">YOUR MONEY</p>
+            <h3>My accounts</h3>
+          </div>
+          <button id="refresh" class="secondary">↻ Refresh</button>
+        </div>
+        <div id="accounts" class="accounts"></div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">QUICK ACTIONS</p>
+        <h3>Money movement</h3>
+        <p class="muted">Make a deposit, withdrawal or account transfer.</p>
+        <form id="moneyForm" class="grid">
+          <label>Operation
+            <select name="kind">
+              <option value="deposit">Deposit</option>
+              <option value="withdraw">Withdraw</option>
+              <option value="transfer">Transfer</option>
+            </select>
+          </label>
+          <label>From account ID
+            <input name="accountId" type="number" min="1" placeholder="Account ID" required>
+          </label>
+          <label id="toWrap" hidden>To account ID
+            <input name="toAccountId" type="number" min="1" placeholder="Destination ID">
+          </label>
+          <label>Amount (paise)
+            <input name="amountPaise" type="number" min="1" step="1" placeholder="e.g. 10000" required>
+          </label>
+          <label>Description
+            <input name="description" maxlength="120" placeholder="Transaction note">
+          </label>
+          <button type="submit">Submit transaction →</button>
+        </form>
+        <p class="muted">₹1 = 100 paise. Transactions use unique idempotency keys.</p>
+        <p id="moneyMessage" class="message"></p>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">ACCOUNT ACTIVITY</p>
+        <h3>Account statement</h3>
+        <form id="statementForm" class="inline">
+          <label>Account ID
+            <input name="accountId" type="number" min="1" placeholder="Enter account ID" required>
+          </label>
+          <button type="submit">View statement</button>
+        </form>
+        <div id="statement"></div>
+      </section>
+
+      <section id="auditPanel" class="panel" hidden>
+        <p class="eyebrow">TRANSPARENCY & CONTROL</p>
+        <h3>Audit ledger</h3>
+        <p class="muted">Review recorded ledger entries based on your role permissions.</p>
+        <button id="loadAudit" class="secondary">Load audit ledger</button>
+        <div id="audit"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <strong>BalanceVault</strong> · Secure and transparent money management.
+    <p>Educational challenge MVP — never use with real money or customer data.</p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

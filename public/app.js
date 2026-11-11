@@ -1,4 +1,4 @@
-let token=null,user=null;const $=id=>document.getElementById(id);const rupees=p=>'₹'+(Number(p)/100).toFixed(2);
+let token=null,user=null;const $=id=>document.getElementById(id);const rupees=p=>'INR '+(Number(p)/100).toFixed(2);
 async function api(path,opt={}){const headers={...(opt.headers||{})};if(token)headers.Authorization='Bearer '+token;if(opt.body)headers['Content-Type']='application/json';const r=await fetch(path,{...opt,headers});const b=await r.json().catch(()=>({error:'Bad server response'}));if(!r.ok)throw Error(b.error||'Request failed');return b}
 function msg(id,t,ok=false){$(id).textContent=t;$(id).className='message '+(ok?'ok':'error')}function esc(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function render(){ $('loginPanel').hidden=!!token;$('appPanel').hidden=!token;$('session').textContent=token?`${user.name} · ${user.role}`:'Not signed in';$('auditPanel').hidden=!token||!['admin','auditor'].includes(user.role)}
