@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -48,7 +49,7 @@
         <button type="submit">Sign in securely →</button>
       </form>
       <p id="loginMessage" class="message"></p>
-      <p class="muted">Use the local demo credentials documented in README.md.</p>
+      <p class="muted">Sign in with your admin credentials.</p>
     </section>
 
     <section id="appPanel" hidden>
@@ -59,6 +60,29 @@
         </div>
         <button id="logout" class="secondary">Sign out</button>
       </div>
+
+      <section class="panel">
+        <p class="eyebrow">CUSTOMER MANAGEMENT</p>
+        <h3>Create Customer & Account</h3>
+        <p class="muted">Register a customer and create their account.</p>
+
+        <form id="createAccountForm" class="grid">
+          <label>Customer name
+            <input name="name" type="text" placeholder="Customer name" required>
+          </label>
+          <label>Customer email
+            <input name="email" type="email" placeholder="customer@example.com" required>
+          </label>
+          <label>Temporary password
+            <input name="password" type="password" minlength="8" placeholder="At least 8 characters" required>
+          </label>
+          <label>Account name
+            <input name="accountName" type="text" placeholder="Savings Account" required>
+          </label>
+          <button type="submit">Create customer account →</button>
+        </form>
+        <p id="createAccountMessage" class="message"></p>
+      </section>
 
       <section class="panel">
         <div class="toolbar">
