@@ -5,15 +5,15 @@
   "private": true,
   "description": "Auditable money movement demo for the Snovasys Fresher Hiring Challenge",
   "type": "module",
-  "scripts": {
-    "dev": "node --watch src/server.js",
-      "start": "node scripts/setup-clearing-account.js && node src/server.js"
-    "db:init": "node scripts/init-db.js",
-    "db:seed": "node scripts/seed.js",
-    "test": "node --test test/money.test.js test/integration.test.js test/auth.test.js",
-    "test:integration": "RUN_INTEGRATION=1 node --test test/integration.test.js",
-    "admin:bootstrap": "node scripts/bootstrap-admin.js"
-  },
+"scripts": {
+  "dev": "node --watch src/server.js",
+  "start": "node scripts/setup-clearing-account.js && node src/server.js",
+  "db:init": "node scripts/init-db.js",
+  "db:seed": "node scripts/seed.js",
+  "test": "node --test test/money.test.js test/integration.test.js test/auth.test.js",
+  "test:integration": "RUN_INTEGRATION=1 node --test test/integration.test.js",
+  "admin:bootstrap": "node scripts/bootstrap-admin.js"
+}
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
