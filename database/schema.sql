@@ -11,11 +11,28 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS accounts (
   id BIGSERIAL PRIMARY KEY,
   owner_user_id BIGINT REFERENCES users(id),
+  account_type TEXT NOT NULL DEFAULT 'customer'
+    CHECK (account_type IN ('customer', 'system')),
   account_name TEXT NOT NULL,
   currency CHAR(3) NOT NULL DEFAULT 'INR',
   balance_paise BIGINT NOT NULL DEFAULT 0 CHECK (balance_paise >= 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE accounts
+ADD COLUMN IF NOT EXISTS account_type TEXT NOT NULL DEFAULT 'customer';
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'accounts_account_type_check'
+  ) THEN
+    ALTER TABLE accounts
+    ADD CONSTRAINT accounts_account_type_check
+    CHECK (account_type IN ('customer', 'system'));
+  END IF;
+END $$;
 
 -- Idempotency keys are unique per authenticated user.
 CREATE TABLE IF NOT EXISTS idempotency_keys (
@@ -43,8 +60,6 @@ CREATE INDEX IF NOT EXISTS ledger_account_created_idx
   ON ledger_entries(account_id, created_at, id);
 
 -- Prevent ordinary UPDATE/DELETE of ledger rows.
--- A database owner can still alter schema or data.
--- Production deployments should use a separate restricted application DB role.
 CREATE OR REPLACE FUNCTION reject_ledger_mutation() RETURNS trigger AS $$
 BEGIN
   RAISE EXCEPTION 'ledger_entries is append-only';
