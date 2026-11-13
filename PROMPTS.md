@@ -47,11 +47,11 @@ of the development work, not verbatim chat transcripts.
 
 ## Additional verification — 2026-11-12
 
-- **Prompt:** Help verify idempotency, double-entry conservation, auditor permissions, and cross-user account isolation through integration tests.
-- **AI output:** Expanded integration test coverage.
-- **Specific issue found:** The existing integration tests did not cover all the required security and transaction scenarios.
-- **What I did:** Ran the expanded integration test successfully. Verified duplicate concurrent requests with the same idempotency key return the same transaction ID. Also verified debit-credit conservation, auditor restrictions, and cross-user isolation.
-- **Fix commit:** Pending — the current integration test changes have not yet been committed.
+- **Prompt summary:** Help manually verify the deployed BalanceVault application.
+- **AI output:** Guidance for testing authentication, account management, money movement, statements, and audit ledger through the live UI.
+- **Specific issue found:** Transaction amounts and account balance/ledger changes showed inconsistencies during manual testing.
+- **What I did:** Tested admin login, account management, deposits, transfers, withdrawals, account statements, and audit ledger access through the deployed application. Identified transaction consistency as an area requiring further investigation.
+- **Fix commit:** Not applicable — further investigation and fixes are pending.
 
 ## Evidence policy
 
