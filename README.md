@@ -1,23 +1,37 @@
-
 # BalanceVault
 
-BalanceVault is a learning MVP developed for the Snovasys Fresher Hiring Challenge 2026. It demonstrates role-based authentication, account management, integer-paise money operations, double-entry bookkeeping, idempotency, transaction safety, statements, and an append-only ledger.
+**Smart Money. Secure Future.**
 
-> **Disclaimer:** This is an educational project, not a certified banking system. Do not use real money, real customer information, or production financial accounts.
+BalanceVault is an educational banking application developed for the **Snovasys Fresher Hiring Challenge 2026**.
+
+It demonstrates role-based authentication, account management, deposits, withdrawals, transfers, integer-paise calculations, PostgreSQL transactions, idempotency, account statements, and an append-only audit ledger.
+
+**Live Demo:** https://balancevault-6zmc.onrender.com
+
+> **Disclaimer:** This is an educational MVP, not a certified banking system. Never use real money, real customer information, or production financial accounts.
 
 ## Features
 
 - JWT-based authentication
 - Admin, account holder, and auditor roles
-- Account creation and account ownership
-- Deposits, withdrawals, and transfers
+- Customer and account management
+- Deposits, withdrawals, and account transfers
 - Integer-paise monetary calculations
 - PostgreSQL database transactions
 - Idempotency-key support
 - Double-entry debit and credit ledger
-- Account statements
+- Account statements and transaction history
 - Append-only ledger protection
-- Role-based and cross-user access restrictions
+- Role-based access restrictions
+
+## Technology Stack
+
+- Node.js
+- Express.js
+- PostgreSQL
+- HTML, CSS, and JavaScript
+- JWT authentication
+- bcryptjs
 
 ## Requirements
 
@@ -25,68 +39,76 @@ BalanceVault is a learning MVP developed for the Snovasys Fresher Hiring Challen
 - PostgreSQL 16 or Docker Desktop
 - Git
 
-## Local setup
+## Local Setup
 
-1. Copy `.env.example` to `.env`.
-2. Set a strong, private `JWT_SECRET` and configure `DATABASE_URL`.
-3. Start PostgreSQL:
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/mlasya927/balancevault.git
+   cd balancevault
+   ```
+
+2. Create your environment file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Configure `DATABASE_URL` and a strong, private `JWT_SECRET` in `.env`.
+
+4. Start PostgreSQL:
 
    ```bash
    docker compose up -d
    ```
 
-4. Install dependencies:
+5. Install dependencies:
 
    ```bash
    npm install
    ```
 
-5. Initialize the database:
+6. Initialize the database:
 
    ```bash
-   node scripts/init-db.js
+   npm run db:init
    ```
 
-6. Seed demo users and accounts:
+7. Seed demo data:
 
    ```bash
    npm run db:seed
    ```
 
-7. Start the application:
+8. Start the application:
 
    ```bash
-   node src/server.js
+   npm start
    ```
 
-8. Open `http://localhost:4000`.
+9. Open:
 
-## Demo accounts
+   `http://localhost:4000`
 
-These credentials are for local development only.
+## Demo Accounts
 
-| Role | Email | Password |
-|---|---|---|
-| Admin | admin@ledgerline.test | AdminDemo123! |
-| Holder | holder@ledgerline.test | HolderDemo123! |
-| Auditor | auditor@ledgerline.test | AuditorDemo123! |
+Demo users can be created using the database seed script or the application's admin setup process.
 
-Do not use these demo credentials for a public deployment.
+Do not publish passwords or use demo credentials for personal or production accounts.
 
-## API overview
+## API Overview
 
 | Endpoint | Purpose |
 |---|---|
-| `POST /api/auth/register` | Register a user |
-| `POST /api/auth/login` | Authenticate |
-| `GET /api/me` | Get current user |
+| `POST /api/auth/login` | User authentication |
+| `GET /api/me` | Current user details |
 | `GET /api/accounts` | List accessible accounts |
-| `POST /api/accounts` | Create an account (admin) |
+| `POST /api/accounts` | Create an account |
 | `POST /api/money/deposit` | Deposit funds |
 | `POST /api/money/withdraw` | Withdraw funds |
 | `POST /api/money/transfer` | Transfer funds |
 | `GET /api/accounts/:id/statement` | View account statement |
-| `GET /api/audit/ledger` | Access audit ledger |
+| `GET /api/audit/ledger` | View audit ledger |
 
 Authenticated endpoints require:
 
@@ -94,78 +116,67 @@ Authenticated endpoints require:
 
 Money operations require a unique `Idempotency-Key` header for each distinct operation.
 
-All monetary amounts are integer paise. ₹1 = 100 paise. Decimal rupee amounts must not be sent.
+All monetary amounts are represented in integer paise.
 
-## Financial integrity
+**₹1 = 100 paise.**
 
-- Money operations run inside PostgreSQL transactions.
-- Account rows are locked before balance updates.
-- Transfers debit and credit accounts within the same transaction.
-- Idempotency keys prevent duplicate processing on retries.
-- Request hashes prevent reuse of a key for a different operation.
-- Successful transactions create corresponding debit and credit ledger entries.
-- Ledger updates and deletes are blocked by a database trigger.
+## Financial Integrity
+
+- Money operations use PostgreSQL transactions.
+- Account balances are checked before money movements.
+- Transfers debit and credit accounts within a transaction.
+- Idempotency keys help prevent duplicate processing.
+- Request hashes help prevent idempotency-key reuse for different requests.
+- Successful money movements create ledger entries.
+- Database triggers protect ledger records from updates and deletes.
 - Account balances have a non-negative database constraint.
 
-## Security and access control
+## Security and Access Control
 
-- Admins can manage accounts.
-- Holders are restricted to their own accounts.
-- Auditors have read-only access to protected financial operations.
-- Cross-user account and statement access is restricted.
-- Authentication is required for protected API endpoints.
+- JWT authentication protects restricted API endpoints.
+- Admins can manage customer accounts.
+- Account holders are restricted to permitted accounts.
+- Auditors have read-only access to audit information.
+- Cross-user access restrictions are implemented.
 
-## Test results
+## Testing
 
-The following tests were successfully executed locally on November 12, 2026:
+The deployed demo has been manually tested for:
 
-- Admin route authorization
-- Holder restriction on admin routes
-- Auditor route authorization
-- Integer-paise calculations
-- Positive safe-integer validation
-- Idempotent transaction retry
-- Double-entry debit-credit conservation
-- Concurrent duplicate request handling
-- Cross-user account isolation
-- Cross-user statement access restriction
+- Admin login
+- Customer and account management
+- Money transfers
+- Withdrawals
+- Account statements
+- Audit ledger access
 
-Latest combined test run:
+Automated tests can be run using:
 
-- 6 tests passed
-- 0 failed
-- 0 skipped
-
-Latest expanded integration test:
-
-- 1 test passed
-- 0 failed
-- 0 skipped
-
-Run the integration test with the application server running:
-
-```powershell
-$env:RUN_INTEGRATION='1'; node --test .\test\integration.test.js; Remove-Item Env:RUN_INTEGRATION
+```bash
+npm test
 ```
 
-Run the full test suite:
+For the integration test, start the application first and run:
 
-```powershell
-$env:RUN_INTEGRATION='1'; node --test .\test\money.test.js .\test\integration.test.js .\test\auth.test.js; Remove-Item Env:RUN_INTEGRATION
+```bash
+npm run test:integration
 ```
 
-## Known limitations
+Review the test output before reporting automated test results.
 
-- This is an MVP, not production banking software.
-- Production deployment security hardening is still required.
-- Rate limiting, password reset, email verification, and refresh-token flows need further work.
-- Concurrent testing currently verifies duplicate requests with the same idempotency key; it is not a complete concurrent-overdraft stress test.
-- Additional failure-path, rollback, and load testing is recommended.
-- Production database permissions and secrets must be configured securely.
+## Known Limitations
 
-## Development evidence
+- Financial transaction and ledger consistency require further verification before any real-world use.
+- This is an MVP and not production banking software.
+- Production-grade security hardening is still required.
+- Rate limiting, password reset, email verification, and refresh-token support need further work.
+- Additional concurrency, rollback, failure-path, and load testing is recommended.
+- Database permissions and production secrets require secure configuration.
+- The user interface is a minimal educational demonstration.
 
-See [PROMPTS.md](PROMPTS.md) for genuine AI-assisted development records. Entries should describe actual prompts, generated changes, issues discovered, verification performed, and real commit references.
+## Development Evidence
+
+See [PROMPTS.md](PROMPTS.md) for genuine AI-assisted development records, including prompts, changes, issues discovered, verification, and actual commit references.
 
 ## License
 
