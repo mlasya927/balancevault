@@ -34,7 +34,7 @@ of the development work, not verbatim chat transcripts.
 - **Prompt summary (reconstructed):** Implement double-entry accounting for deposits, withdrawals, and transfers using database transactions.
 - **AI output:** Double-entry ledger implementation and database changes.
 - **Specific issue found:** Money movement must preserve matching debit and credit entries and avoid inconsistent account balances.
-- **What I did:** Implemented the double-entry accounting changes. Later verified integer-paise handling, ledger conservation, and transaction retry behavior through integration tests.
+- **What I did:** Further verification of integer-paise handling, ledger conservation, and transaction retry behavior remains pending.
 - **Fix commit:** https://github.com/mlasya927/balancevault/commit/f8774b1
 
 ## Entry 5 — 2026-11-11 — BalanceVault UI redesign
